@@ -23,7 +23,7 @@ class CalController {
 
     buttons.forEach((btn, index) => {
       btn.addEventListener("click", (e) => {
-        console.log(btn.className.baseVal.replace("btn-", ""))
+        console.log(btn.className.baseVal.replace("btn-", ""));
       });
     });
   }
