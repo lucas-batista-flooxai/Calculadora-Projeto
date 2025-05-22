@@ -1,8 +1,9 @@
 class CalController {
   constructor() {
+    this._audio = new Audio("click.mp3");
+    this._audioOnOff = false;
     this._lastOperator = "";
     this._lastNumber = "";
-
     this._operation = [];
     this._locale = "pt-BR";
     this._displayCalcEl = document.querySelector("#display");
@@ -15,14 +16,13 @@ class CalController {
   }
 
   pasteFromClipboard() {
-    document.addEventListener('paste', e=> {
+    document.addEventListener("paste", (e) => {
+      let text = e.clipboardData.getData("Text");
 
-      let text = e.clipboardData.getData('Text')
+      this.displayCalc = parseFloat(text);
 
-      this.displayCalc = parseFloat(text)
-
-      console.log(text)
-    })
+      console.log(text);
+    });
   }
 
   copyToClipboard() {
@@ -36,7 +36,7 @@ class CalController {
 
     document.execCommand("Copy");
 
-    input.remove()
+    input.remove();
   }
 
   initialize() {
@@ -47,12 +47,31 @@ class CalController {
     }, 1000);
 
     this.setLastNumberToDisplay();
-    this.pasteFromClipboard()
+    this.pasteFromClipboard();
+
+    document.querySelectorAll(".btn-ac").forEach((btn) => {
+      btn.addEventListener("dblclick", (e) => {
+        this.toggleAudio();
+      });
+    });
+  }
+
+  toggleAudio() {
+    this._audioOnOff = !this._audioOnOff;
+  }
+
+  playAudio() {
+    if (this._audioOnOff) {
+      this._audio.currentTime = 0;
+      this._audio.play();
+    }
   }
 
   initKeyboard() {
     document.addEventListener("keyup", (e) => {
       console.log(e.key);
+
+      this.playAudio();
 
       switch (e.key) {
         case "Escape":
@@ -93,9 +112,9 @@ class CalController {
           this.addOperation(parseInt(e.key));
           break;
 
-        case 'c':
-          if(e.ctrlKey) this.copyToClipboard()
-            break;
+        case "c":
+          if (e.ctrlKey) this.copyToClipboard();
+          break;
       }
     });
   }
@@ -253,6 +272,8 @@ class CalController {
   }
 
   execBtn(value) {
+    this.playAudio();
+
     switch (value) {
       case "ac":
         this.clearAll();
