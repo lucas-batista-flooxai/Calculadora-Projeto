@@ -11,6 +11,7 @@ class CalController {
     this._currentDate;
     this.initialize();
     this.initButtonsEvents();
+    this.initKeyboard();
   }
 
   initialize() {
@@ -23,6 +24,52 @@ class CalController {
     this.setLastNumberToDisplay();
   }
 
+  initKeyboard() {
+    document.addEventListener("keyup", (e) => {
+      console.log(e.key);
+
+      switch (e.key) {
+        case "Escape":
+          this.clearAll();
+          break;
+
+        case "Backspace":
+          this.clearEntry();
+          break;
+
+        case "+":
+        case "-":
+        case "*":
+        case "/":
+        case "%":
+            this.addOperation(e.key)
+            break;
+        case "Enter":
+        case "=":
+          this.calc();
+          break;
+
+        case ".":
+        case ",":
+          this.addDot(".");
+          break;
+
+        case "0":
+        case "1":
+        case "2":
+        case "3":
+        case "4":
+        case "5":
+        case "6":
+        case "7":
+        case "8":
+        case "9":
+          this.addOperation(parseInt(e.key));
+          break;
+      }
+    });
+  }
+
   addEventListenerAll(element, events, fn) {
     events.split(" ").forEach((event) => {
       element.addEventListener(event, fn, false);
@@ -31,8 +78,8 @@ class CalController {
 
   clearAll() {
     this._operation = [];
-    this._lastNumber = '';
-    this._lastOperator = '';
+    this._lastNumber = "";
+    this._lastOperator = "";
 
     this.setLastNumberToDisplay();
   }
@@ -156,20 +203,23 @@ class CalController {
   }
 
   addDot() {
-
     let lastOperation = this.getLastOperation();
 
-    if (typeof lastOperation === 'string' && lastOperation.lastOperation.split('').indexOf('.') > -1) return
+    if (
+      typeof lastOperation === "string" &&
+      lastOperation.lastOperation.split("").indexOf(".") > -1
+    )
+      return;
 
-    if(this.isOperator(lastOperation) || !lastOperation) {
-      this.pushOperation('0.')
+    if (this.isOperator(lastOperation) || !lastOperation) {
+      this.pushOperation("0.");
     } else {
-      this.setLastOperation(lastOperation.toString() + '.')
+      this.setLastOperation(lastOperation.toString() + ".");
     }
 
     this.setLastNumberToDisplay();
-    
-    console.log(lastOperation)
+
+    console.log(lastOperation);
   }
 
   execBtn(value) {
